@@ -41,5 +41,12 @@ public class HospitalDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Order>()
             .Property(o => o.TotalPrice)
             .HasPrecision(10, 2);
+
+        // Исправление ошибки с триггерами (EF Core 7/8+)
+        // При наличии триггеров на таблице SQL Server, EF Core должен знать об этом, 
+        // чтобы не использовать несовместимый оператор OUTPUT.
+        builder.Entity<Patient>().ToTable(tb => tb.HasTrigger("trg_Patient"));
+        builder.Entity<Appointment>().ToTable(tb => tb.HasTrigger("trg_Appointment"));
+        builder.Entity<Order>().ToTable(tb => tb.HasTrigger("trg_Order"));
     }
 }
