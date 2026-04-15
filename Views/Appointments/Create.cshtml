@@ -1,0 +1,44 @@
+@model HospitalApp.ViewModels.AppointmentCreateViewModel
+@{
+    ViewData["Title"] = "Запись на услугу";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3>@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="IDMedicalService" class="form-label"></label>
+                            <select asp-for="IDMedicalService" class="form-select" asp-items="ViewBag.Services">
+                                <option value="">Выберите услугу...</option>
+                            </select>
+                            <span asp-validation-for="IDMedicalService" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DateService" class="form-label"></label>
+                            <input asp-for="DateService" class="form-control" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                            <span asp-validation-for="DateService" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Записаться</button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Назад</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

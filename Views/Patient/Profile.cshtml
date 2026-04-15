@@ -1,0 +1,32 @@
+@model HospitalApp.ViewModels.PatientProfileViewModel
+@{
+    ViewData["Title"] = "Мои данные";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">@ViewData["Title"]</h2>
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-light btn-sm">Назад</a>
+                <a asp-action="Edit" class="btn btn-warning btn-sm">Изменить</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Фамилия:</strong> @Model.LName</p>
+                    <p><strong>Имя:</strong> @Model.FName</p>
+                    <p><strong>Отчество:</strong> @Model.MName</p>
+                    <p><strong>Дата рождения:</strong> @Model.DateOfBirthday.ToString("dd.MM.yyyy")</p>
+                </div>
+                <div class="col-md-6 border-start">
+                    <p><strong>Пол:</strong> @Model.GenderName</p>
+                    <p><strong>Телефон:</strong> @Model.Phone</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Адрес:</strong> @Model.Address</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

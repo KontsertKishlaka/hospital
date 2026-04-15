@@ -1,0 +1,43 @@
+@model IEnumerable<HospitalApp.ViewModels.UpcomingAppointmentViewModel>
+@{
+    ViewData["Title"] = "Предстоящие записи";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>@ViewData["Title"]</h2>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Назад</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info shadow-sm">
+            <h4 class="alert-heading">Ближайшей записи нет</h4>
+            <p class="mb-0">Запишитесь на прием в личном кабинете.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm">
+            <table class="table table-hover align-middle border">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Дата и время</th>
+                        <th>Услуга</th>
+                        <th>Врач</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.DateService.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@item.ServiceTitle</td>
+                            <td>@item.DoctorShortName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

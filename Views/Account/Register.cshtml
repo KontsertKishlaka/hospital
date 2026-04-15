@@ -1,0 +1,103 @@
+@model HospitalApp.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3>@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Register" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="LName" class="form-label"></label>
+                                <input asp-for="LName" class="form-control" />
+                                <span asp-validation-for="LName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="FName" class="form-label"></label>
+                                <input asp-for="FName" class="form-control" />
+                                <span asp-validation-for="FName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="MName" class="form-label"></label>
+                                <input asp-for="MName" class="form-control" />
+                                <span asp-validation-for="MName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateOfBirthday" class="form-label"></label>
+                                <input asp-for="DateOfBirthday" class="form-control" type="date" />
+                                <span asp-validation-for="DateOfBirthday" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IDGender" class="form-label"></label>
+                                <select asp-for="IDGender" class="form-select" asp-items="ViewBag.Genders">
+                                    <option value="">Выберите пол...</option>
+                                </select>
+                                <span asp-validation-for="IDGender" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Phone" class="form-label"></label>
+                                <input asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="mb-3">
+                            <label asp-for="Login" class="form-label"></label>
+                            <input asp-for="Login" class="form-control" />
+                            <span asp-validation-for="Login" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password" class="form-label"></label>
+                                <input asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Зарегистрироваться</button>
+                            <a asp-action="Login" class="btn btn-outline-secondary">Уже есть аккаунт? Войти</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

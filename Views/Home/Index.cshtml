@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Личный кабинет пациента";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="container py-5">
+    <div class="row text-center mb-4">
+        <div class="col">
+            <h1 class="display-4">Добро пожаловать в личный кабинет!</h1>
+            <p class="lead">Здесь вы можете управлять своими записями и просматривать медицинскую историю.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Предстоящие записи -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="/visual/hospital_icon.png" alt="Записи" style="width: 64px; height: 64px;" onerror="this.src='https://img.icons8.com/color/96/calendar--v1.png'" />
+                    </div>
+                    <h5 class="card-title">Предстоящие записи</h5>
+                    <p class="card-text text-muted">Посмотрите ваши ближайшие визиты к врачу.</p>
+                    <a asp-controller="Appointments" asp-action="Upcoming" class="btn btn-primary stretched-link">Открыть</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Мои данные -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-info">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="https://img.icons8.com/color/96/user-male-circle--v1.png" alt="Профиль" style="width: 64px; height: 64px;" />
+                    </div>
+                    <h5 class="card-title">Мои данные</h5>
+                    <p class="card-text text-muted">Просматривайте и редактируйте свою личную информацию.</p>
+                    <a asp-controller="Patient" asp-action="Profile" class="btn btn-info text-white stretched-link">Открыть</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Моя история -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-secondary">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="https://img.icons8.com/color/96/medical-history.png" alt="История" style="width: 64px; height: 64px;" />
+                    </div>
+                    <h5 class="card-title">Моя история</h5>
+                    <p class="card-text text-muted">История ваших посещений и диагнозов.</p>
+                    <a asp-controller="Appointments" asp-action="History" class="btn btn-secondary stretched-link">Открыть</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Запись на услугу -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="https://img.icons8.com/color/96/add-property.png" alt="Запись" style="width: 64px; height: 64px;" />
+                    </div>
+                    <h5 class="card-title">Запись на услугу</h5>
+                    <p class="card-text text-muted">Запишитесь на прием к врачу онлайн.</p>
+                    <a asp-controller="Appointments" asp-action="Create" class="btn btn-success stretched-link">Записаться</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Выйти -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="/visual/exit_icon.png" alt="Выйти" style="width: 64px; height: 64px;" onerror="this.src='https://img.icons8.com/color/96/exit.png'" />
+                    </div>
+                    <h5 class="card-title">Выйти</h5>
+                    <p class="card-text text-muted">Завершить текущий сеанс работы.</p>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger stretched-link w-100">Выйти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
