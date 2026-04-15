@@ -38,12 +38,67 @@ public class AccountController : Controller
         ViewData["ReturnUrl"] = returnUrl;
         if (ModelState.IsValid)
         {
-            // Пытаемся найти пользователя по логину (UserName)
-            var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
-            if (result.Succeeded)
+            try
             {
-                return RedirectToLocal(returnUrl);
+                // 1. Пробуем стандартный вход через Identity
+                var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return RedirectToLocal(returnUrl);
+                }
             }
+            catch (Exception ex)
+            {
+                // Если таблицы Identity не созданы, PasswordSignInAsync упадет с ошибкой.
+                // В этом случае продолжаем попытку входа через таблицу Patient.
+            }
+
+            try
+            {
+                // 2. Проверяем существующего пациента в таблице Patient (миграция/legacy вход)
+                var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Login == model.Login && p.Password == model.Password);
+                if (patient != null)
+                {
+                    // Проверяем, существует ли уже Identity пользователь для этого логина
+                    var user = await _userManager.FindByNameAsync(patient.Login ?? "");
+                    if (user == null)
+                    {
+                        // Если Identity пользователя нет, создаем его "на лету"
+                        user = new ApplicationUser 
+                        { 
+                            UserName = patient.Login, 
+                            Email = patient.Email,
+                            PatientId = patient.ID 
+                        };
+                        
+                        var createResult = await _userManager.CreateAsync(user, model.Password);
+                        if (createResult.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
+                            return RedirectToLocal(returnUrl);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Ошибка при создании записи аутентификации.");
+                            return View(model);
+                        }
+                    }
+                    else
+                    {
+                        // Если пользователь Identity есть, но пароль не подошел в PasswordSignInAsync, 
+                        // значит в таблице AspNetUsers другой пароль (хешированный).
+                        // Но если в Patient.Password он совпал, мы можем его обновить или выдать ошибку.
+                        ModelState.AddModelError(string.Empty, "Неверный пароль в системе аутентификации.");
+                        return View(model);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Ошибка базы данных: {ex.Message}. Проверьте подключение в SSMS.");
+                return View(model);
+            }
+
             ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
         }
 
@@ -61,51 +116,58 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        if (ModelState.IsValid)
+        try
         {
-            // 1. Создаем пациента
-            var patient = new Patient
+            if (ModelState.IsValid)
             {
-                FName = model.FName,
-                LName = model.LName,
-                MName = model.MName,
-                DateOfBirthday = model.DateOfBirthday,
-                IDGender = model.IDGender,
-                Address = model.Address,
-                Phone = model.Phone,
-                Email = model.Email,
-                Login = model.Login
-                // Пароль в Patient храним как есть (или не храним, если используем Identity), 
-                // но ТЗ просит заполнить Patient.
-            };
+                // 1. Создаем пациента
+                var patient = new Patient
+                {
+                    FName = model.FName,
+                    LName = model.LName,
+                    MName = model.MName,
+                    DateOfBirthday = model.DateOfBirthday,
+                    IDGender = model.IDGender,
+                    Address = model.Address,
+                    Phone = model.Phone,
+                    Email = model.Email,
+                    Login = model.Login,
+                    Password = model.Password
+                };
 
-            _context.Patients.Add(patient);
-            await _context.SaveChangesAsync();
+                _context.Patients.Add(patient);
+                await _context.SaveChangesAsync();
 
-            // 2. Создаем пользователя Identity
-            var user = new ApplicationUser 
-            { 
-                UserName = model.Login, 
-                Email = model.Email,
-                PatientId = patient.ID 
-            };
-            
-            var result = await _userManager.CreateAsync(user, model.Password);
+                // 2. Создаем пользователя Identity
+                var user = new ApplicationUser 
+                { 
+                    UserName = model.Login, 
+                    Email = model.Email,
+                    PatientId = patient.ID 
+                };
+                
+                var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (result.Succeeded)
-            {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Index", "Home");
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+                
+                // Если ошибка при создании пользователя - откатываем пациента
+                _context.Patients.Remove(patient);
+                await _context.SaveChangesAsync();
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
-            
-            // Если ошибка при создании пользователя - откатываем пациента (в идеале использовать транзакцию)
-            _context.Patients.Remove(patient);
-            await _context.SaveChangesAsync();
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError(string.Empty, $"Произошла ошибка при регистрации: {ex.Message}");
+            // Логируем ошибку, если у нас есть ILogger
         }
 
         ViewBag.Genders = new SelectList(await _context.Genders.ToListAsync(), "ID", "GenderName");

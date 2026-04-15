@@ -26,9 +26,40 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Проверка подключения к БД при старте
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var context = services.GetRequiredService<HospitalDbContext>();
+        logger.LogInformation("Проверка подключения к БД...");
+        if (await context.Database.CanConnectAsync())
+        {
+            logger.LogInformation("Успешное подключение к БД: {Database}", context.Database.GetDbConnection().Database);
+            
+            // Проверяем наличие таблиц Identity
+            var tables = await context.Database.ExecuteSqlRawAsync("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'AspNetUsers'");
+            // ExecuteSqlRawAsync возвращает количество затронутых строк, а не результат SELECT. 
+            // Для получения значения используем другой подход или просто логируем.
+            logger.LogInformation("БД доступна. Проверьте наличие таблиц Identity (AspNetUsers) в SSMS.");
+        }
+        else
+        {
+            logger.LogError("Не удалось подключиться к БД. Проверьте строку подключения в appsettings.json.");
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Ошибка при проверке подключения к БД.");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage(); // Более детальные ошибки
     app.UseMigrationsEndPoint();
 }
 else

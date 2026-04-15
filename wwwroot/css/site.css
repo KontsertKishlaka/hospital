@@ -1,0 +1,44 @@
+@font-face {
+    font-family: '5ka Sans Design';
+    src: url('../fonts/5ka-sans-design-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: '5ka Sans Design';
+    src: url('../fonts/5ka-sans-design-semibold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: '5ka Sans Design';
+    src: url('../fonts/5ka-sans-design-black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+body {
+    font-family: '5ka Sans Design', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
