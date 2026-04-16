@@ -2,7 +2,9 @@
 *.log
 
 # docs
-tech/
+screenshots/
+business-tech.*
+tech.*
 
 # ide
 .vs/
