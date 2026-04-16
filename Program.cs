@@ -39,11 +39,40 @@ using (var scope = app.Services.CreateScope())
         {
             logger.LogInformation("Успешное подключение к БД: {Database}", context.Database.GetDbConnection().Database);
             
-            // Проверяем наличие таблиц Identity
-            var tables = await context.Database.ExecuteSqlRawAsync("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'AspNetUsers'");
-            // ExecuteSqlRawAsync возвращает количество затронутых строк, а не результат SELECT. 
-            // Для получения значения используем другой подход или просто логируем.
-            logger.LogInformation("БД доступна. Проверьте наличие таблиц Identity (AspNetUsers) в SSMS.");
+            // Проверка наличия таблиц Identity
+            try
+            {
+                var tablesExist = await context.Database.ExecuteSqlRawAsync("SELECT 1 FROM AspNetUsers");
+                logger.LogInformation("Таблицы Identity обнаружены.");
+            }
+            catch (Exception)
+            {
+                logger.LogWarning("Таблицы Identity (AspNetUsers) не найдены. Пытаюсь создать их автоматически...");
+                
+                var scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "docs", "tech", "identity_tables.sql");
+                if (File.Exists(scriptPath))
+                {
+                    var sqlContent = await File.ReadAllTextAsync(scriptPath);
+                    // Удаляем USE и GO, разбиваем на команды
+                    var commands = sqlContent
+                        .Replace("USE [Hospital_BukarevBedin_2ISP11-41]", "")
+                        .Replace("GO", ";")
+                        .Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var command in commands)
+                    {
+                        if (!string.IsNullOrWhiteSpace(command))
+                        {
+                            await context.Database.ExecuteSqlRawAsync(command);
+                        }
+                    }
+                    logger.LogInformation("Таблицы Identity успешно созданы!");
+                }
+                else
+                {
+                    logger.LogError("Файл identity_tables.sql не найден по пути: {Path}", scriptPath);
+                }
+            }
         }
         else
         {

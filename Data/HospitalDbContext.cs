@@ -48,5 +48,9 @@ public class HospitalDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Patient>().ToTable(tb => tb.HasTrigger("trg_Patient"));
         builder.Entity<Appointment>().ToTable(tb => tb.HasTrigger("trg_Appointment"));
         builder.Entity<Order>().ToTable(tb => tb.HasTrigger("trg_Order"));
+        builder.Entity<Employee>().ToTable(tb => tb.HasTrigger("trg_Employee"));
+        builder.Entity<MedicalService>().ToTable(tb => tb.HasTrigger("trg_MedicalService"));
+        builder.Entity<PatientDiagnosis>().ToTable(tb => tb.HasTrigger("trg_PatientDiagnosis"));
+        builder.Entity<TegOfClient>().ToTable(tb => tb.HasTrigger("trg_TegOfClient"));
     }
 }
