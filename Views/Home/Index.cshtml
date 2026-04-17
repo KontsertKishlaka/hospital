@@ -28,7 +28,7 @@
                     </div>
                     <h5 class="card-title">Предстоящие записи</h5>
                     <p class="card-text text-muted">Посмотрите ваши ближайшие визиты к врачу.</p>
-                    <a asp-controller="Appointments" asp-action="Upcoming" class="btn btn-primary stretched-link">Открыть</a>
+                    <a asp-controller="Appointments" asp-action="Upcoming" class="btn btn-primary stretched-link w-50">Открыть</a>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
                     </div>
                     <h5 class="card-title">Мои данные</h5>
                     <p class="card-text text-muted">Просматривайте и редактируйте свою личную информацию.</p>
-                    <a asp-controller="Patient" asp-action="Profile" class="btn btn-info text-white stretched-link">Открыть</a>
+                    <a asp-controller="Patient" asp-action="Profile" class="btn btn-info text-white stretched-link w-50">Открыть</a>
                 </div>
             </div>
         </div>
@@ -52,11 +52,11 @@
             <div class="card h-100 shadow-sm border-secondary">
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <img src="https://img.icons8.com/color/96/medical-history.png" alt="История" style="width: 64px; height: 64px;" />
+                        <img src="/visual/history_icon.png" alt="История" style="width: 64px; height: 64px;" />
                     </div>
                     <h5 class="card-title">Моя история</h5>
                     <p class="card-text text-muted">История ваших посещений и диагнозов.</p>
-                    <a asp-controller="Appointments" asp-action="History" class="btn btn-secondary stretched-link">Открыть</a>
+                    <a asp-controller="Appointments" asp-action="History" class="btn btn-secondary stretched-link w-50">Открыть</a>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
                     </div>
                     <h5 class="card-title">Запись на услугу</h5>
                     <p class="card-text text-muted">Запишитесь на прием к врачу онлайн.</p>
-                    <a asp-controller="Appointments" asp-action="Create" class="btn btn-success stretched-link">Записаться</a>
+                    <a asp-controller="Appointments" asp-action="Create" class="btn btn-success stretched-link w-50">Записаться</a>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
                     <h5 class="card-title">Выйти</h5>
                     <p class="card-text text-muted">Завершить текущий сеанс работы.</p>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-danger stretched-link w-100">Выйти</button>
+                        <button type="submit" class="btn btn-danger stretched-link w-50">Выйти</button>
                     </form>
                 </div>
             </div>
